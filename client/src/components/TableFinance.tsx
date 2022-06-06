@@ -21,6 +21,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
 type Props = {
     tableFields: TableField[]
     rows: Ticker[]
+    rowsPrev: Ticker[]
     header: string
     favorites?: string[]
     addToFavorites?: (id: string) => void
@@ -28,7 +29,7 @@ type Props = {
 }
 
 export default function TableFinance(props: Props) {
-    const {tableFields, rows, header, favorites, removeFromFavorites, addToFavorites} = props
+    const {tableFields, rows, rowsPrev, header, favorites, removeFromFavorites, addToFavorites} = props
 
     function getTableHead(): JSX.Element {
         return (
@@ -42,22 +43,25 @@ export default function TableFinance(props: Props) {
         )
     }
 
-    function getTableRow(row: Ticker): JSX.Element {
+    function getTableRow(row: Ticker, rowPrev?: Ticker): JSX.Element {
+        const increase: boolean = rowPrev ? row.price >= rowPrev.price : true
+
         return (
             <TableRow key={row.ticker}>
                 <TableCell>{row.ticker}</TableCell>
                 <TableCell>{row.exchange}</TableCell>
                 <TableCell>
                     <Box
-                        bgcolor="#fa7474"
-                        color="white"
+                        bgcolor={increase ? '#e6f4ea' : '#fce8e6'}
+                        color={increase ? '#137333' : '#a50e0e'}
                         height="30px"
                         display="flex"
                         justifyContent="center"
                         gap="5px"
                         alignItems="center"
                         borderRadius="5px">
-                        {row.price} <ArrowDownwardIcon fontSize="small" />
+                        {row.price}
+                        {increase ? <ArrowUpwardIcon fontSize="small" /> : <ArrowDownwardIcon fontSize="small" />}
                     </Box>
                 </TableCell>
                 <TableCell>{row.change}</TableCell>
@@ -85,16 +89,17 @@ export default function TableFinance(props: Props) {
         )
     }
 
-    function getTableBody(rows: Ticker[], favorites?: string[]): JSX.Element {
+    function getTableBody(rows: Ticker[], rowsPrev: Ticker[], favorites?: string[]): JSX.Element {
         return (
             <TableBody>
                 {rows.reduce((res: JSX.Element[], row: Ticker) => {
+                    const rowPrev: Ticker | undefined = rowsPrev.find((rowPrev) => rowPrev.ticker === row.ticker)
                     if (favorites) {
                         if (favorites.includes(row.ticker)) {
-                            res.push(getTableRow(row))
+                            res.push(getTableRow(row, rowPrev))
                         }
                     } else {
-                        res.push(getTableRow(row))
+                        res.push(getTableRow(row, rowPrev))
                     }
                     return res
                 }, [])}
@@ -110,7 +115,7 @@ export default function TableFinance(props: Props) {
             <TableContainer component={Paper}>
                 <Table sx={{minWidth: 650}}>
                     {getTableHead()}
-                    {getTableBody(rows, favorites)}
+                    {getTableBody(rows, rowsPrev, favorites)}
                 </Table>
             </TableContainer>
         </>

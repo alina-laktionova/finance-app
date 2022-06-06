@@ -1,6 +1,8 @@
 import {TableField} from '../models/TableField'
 
-//finance table header fields
+export const SERVER_URL = 'http://localhost:4000/'
+
+//finance table fields
 export const tableFields: TableField[] = [
     {field: 'ticker', headerName: 'Ticker'},
     {field: 'exchange', headerName: 'Exchange'},
@@ -10,8 +12,8 @@ export const tableFields: TableField[] = [
     {field: 'dividend', headerName: 'Dividend'},
     {field: 'yield', headerName: 'Yield'},
     {field: 'last_trade_time', headerName: 'Last trade time'},
-    {field: '', headerName: ''},
+    {field: 'favorite', headerName: ''},
 ]
 
-//localStorage Favorite Tickers key
+//localStorage key for My Watch List
 export const STORAGE_KEY = 'Favorite_Tickers'

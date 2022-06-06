@@ -1,20 +1,21 @@
 import {io, Socket} from 'socket.io-client'
 import {useEffect, useRef, useState} from 'react'
 import TableFinance from './components/TableFinance'
-import {STORAGE_KEY, tableFields} from './config/constants'
+import {SERVER_URL, STORAGE_KEY, tableFields} from './config/constants'
 import {Ticker} from './models/Ticker'
 import {Container} from '@mui/material'
 import LocalAtmIcon from '@mui/icons-material/LocalAtm'
 import Header from './components/Header'
 import IntervalInput from './components/IntervalInput'
 
-const socket: Socket = io('http://localhost:4000/')
+const socket: Socket = io(SERVER_URL)
 
 function App() {
     const [rows, setRows] = useState<Ticker[]>([])
+    const [rowsPrev, setRowsPrev] = useState<Ticker[]>([])
     const [favorites, setFavorites] = useState<string[]>([])
     const [delay, setDelay] = useState<number>(5000)
-    const data = useRef<{new: Ticker[]; old: Ticker[]}>({new: [], old: []})
+    const data = useRef<Ticker[]>([])
 
     useEffect(() => {
         socket.emit('start')
@@ -22,16 +23,7 @@ function App() {
             setRows(quotes)
         })
         socket.on('ticker', (quotes) => {
-            if (data.current.old.length > 0) {
-                console.log('old')
-                console.log(data.current.old[0].price)
-            }
-            if (data.current.new.length > 0) {
-                console.log('new')
-                console.log(data.current.new[0].price)
-            }
-            data.current.old = data.current.new
-            data.current.new = quotes
+            data.current = quotes
         })
 
         const favoritesStr: string | null = localStorage.getItem(STORAGE_KEY)
@@ -42,13 +34,16 @@ function App() {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setRows(data.current.new)
+            setRowsPrev(rows)
+            // console.log(rows)
+            setRows(data.current)
+            // console.log(data.current)
         }, delay)
 
         return () => {
             if (interval) clearInterval(interval)
         }
-    }, [delay])
+    }, [delay, rows])
 
     useEffect(() => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites))
@@ -73,6 +68,7 @@ function App() {
                     <TableFinance
                         tableFields={tableFields}
                         rows={rows}
+                        rowsPrev={rowsPrev}
                         header={'My Watch List'}
                         favorites={favorites}
                         removeFromFavorites={removeFromFavorites}
@@ -81,6 +77,7 @@ function App() {
                 <TableFinance
                     tableFields={tableFields}
                     rows={rows}
+                    rowsPrev={rowsPrev}
                     header={'All Tickers'}
                     addToFavorites={addToFavorites}
                 />
