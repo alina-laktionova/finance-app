@@ -2,7 +2,17 @@ import {TableField} from '../models/TableField'
 
 export const SERVER_URL = 'http://localhost:4000/'
 
-//finance table fields
+// Ticker names
+export const tickers = [
+    'AAPL', // Apple
+    'GOOGL', // Alphabet
+    'MSFT', // Microsoft
+    'AMZN', // Amazon
+    'FB', // Facebook
+    'TSLA', // Tesla
+]
+
+// Finance Table fields
 export const tableFields: TableField[] = [
     {field: 'ticker', headerName: 'Ticker'},
     {field: 'exchange', headerName: 'Exchange'},
@@ -15,5 +25,6 @@ export const tableFields: TableField[] = [
     {field: 'favorite', headerName: ''},
 ]
 
-//localStorage key for My Watch List
-export const STORAGE_KEY = 'Favorite_Tickers'
+// localStorage key for My Watch List and Hidden Tickers
+export const STORAGE_KEY_FAV = 'Favorite_Tickers'
+export const STORAGE_KEY_HIDDEN = 'Hidden_Tickers'

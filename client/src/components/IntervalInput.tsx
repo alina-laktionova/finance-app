@@ -28,14 +28,7 @@ export default function IntervalInput(props: Props) {
                 inputProps={{min: min, step: step}}
                 onChange={handleChangeSeconds}
             />
-            <Button
-                variant="outlined"
-                sx={{
-                    height: '56px',
-                }}
-                onClick={() => {
-                    setDelay(seconds * 1000)
-                }}>
+            <Button variant="outlined" sx={{height: '56px'}} onClick={() => setDelay(seconds * 1000)}>
                 Ok
             </Button>
         </Box>

@@ -1,12 +1,14 @@
 import {io, Socket} from 'socket.io-client'
 import {useEffect, useRef, useState} from 'react'
-import TableFinance from './components/TableFinance'
-import {SERVER_URL, STORAGE_KEY, tableFields} from './config/constants'
+import FinanceTable from './components/FinanceTable'
+import {SERVER_URL, STORAGE_KEY_FAV, STORAGE_KEY_HIDDEN, tableFields, tickers} from './config/constants'
 import {Ticker} from './models/Ticker'
-import {Container} from '@mui/material'
+import {Box, Button, Container} from '@mui/material'
 import LocalAtmIcon from '@mui/icons-material/LocalAtm'
 import Header from './components/Header'
 import IntervalInput from './components/IntervalInput'
+import SelectField from './components/SelectField'
+import AddIcon from '@mui/icons-material/Add'
 
 const socket: Socket = io(SERVER_URL)
 
@@ -14,7 +16,9 @@ function App() {
     const [rows, setRows] = useState<Ticker[]>([])
     const [rowsPrev, setRowsPrev] = useState<Ticker[]>([])
     const [favorites, setFavorites] = useState<string[]>([])
+    const [hidden, setHidden] = useState<string[]>([])
     const [delay, setDelay] = useState<number>(5000)
+    const [searchValue, setSearchValue] = useState<string | null>(null)
     const data = useRef<Ticker[]>([])
 
     useEffect(() => {
@@ -26,18 +30,20 @@ function App() {
             data.current = quotes
         })
 
-        const favoritesStr: string | null = localStorage.getItem(STORAGE_KEY)
+        const favoritesStr: string | null = localStorage.getItem(STORAGE_KEY_FAV)
         if (favoritesStr) {
             setFavorites(JSON.parse(favoritesStr))
+        }
+        const hiddenStr: string | null = localStorage.getItem(STORAGE_KEY_HIDDEN)
+        if (hiddenStr) {
+            setHidden(JSON.parse(hiddenStr))
         }
     }, [])
 
     useEffect(() => {
         const interval = setInterval(() => {
             setRowsPrev(rows)
-            // console.log(rows)
             setRows(data.current)
-            // console.log(data.current)
         }, delay)
 
         return () => {
@@ -46,8 +52,22 @@ function App() {
     }, [delay, rows])
 
     useEffect(() => {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites))
+        localStorage.setItem(STORAGE_KEY_FAV, JSON.stringify(favorites))
     }, [favorites])
+
+    useEffect(() => {
+        localStorage.setItem(STORAGE_KEY_HIDDEN, JSON.stringify(hidden))
+    }, [hidden])
+
+    function addTicker(id: string) {
+        setHidden(hidden.filter((hiddenTicker: string) => hiddenTicker !== id))
+    }
+
+    function hideTicker(id: string) {
+        if (!hidden.includes(id)) {
+            setHidden([...hidden, id])
+        }
+    }
 
     function addToFavorites(id: string) {
         if (!favorites.includes(id)) {
@@ -61,26 +81,50 @@ function App() {
 
     return (
         <>
-            <Header icon={<LocalAtmIcon fontSize="large" />} name={'Finance'} />
+            <Header icon={<LocalAtmIcon fontSize="large" />} name="Finance" />
             <Container maxWidth="xl" sx={{padding: '40px'}}>
-                <IntervalInput setDelay={setDelay} label={'Set update interval (in seconds)'} min={5} step={1} />
+                <IntervalInput setDelay={setDelay} label="Set update interval (in seconds)" min={5} step={1} />
+
                 {favorites.length > 0 && (
-                    <TableFinance
+                    <FinanceTable
                         tableFields={tableFields}
                         rows={rows}
                         rowsPrev={rowsPrev}
-                        header={'My Watch List'}
+                        header="My Watch List"
                         favorites={favorites}
                         removeFromFavorites={removeFromFavorites}
                     />
                 )}
-                <TableFinance
-                    tableFields={tableFields}
-                    rows={rows}
-                    rowsPrev={rowsPrev}
-                    header={'All Tickers'}
-                    addToFavorites={addToFavorites}
-                />
+
+                <Box display="flex" gap="5px" mt="40px">
+                    <SelectField
+                        options={tickers}
+                        disabled={hidden}
+                        label="Find ticker"
+                        value={searchValue}
+                        setValue={setSearchValue}
+                    />
+                    <Button
+                        variant="outlined"
+                        disabled={!searchValue}
+                        onClick={() => {
+                            if (searchValue) addTicker(searchValue)
+                        }}>
+                        <AddIcon />
+                    </Button>
+                </Box>
+
+                {rows.length > 0 && hidden.length < rows.length && (
+                    <FinanceTable
+                        tableFields={[...tableFields, {field: 'hide', headerName: ''}]}
+                        rows={rows}
+                        rowsPrev={rowsPrev}
+                        hidden={hidden}
+                        header="All Tickers"
+                        addToFavorites={addToFavorites}
+                        hideTicker={hideTicker}
+                    />
+                )}
             </Container>
         </>
     )
