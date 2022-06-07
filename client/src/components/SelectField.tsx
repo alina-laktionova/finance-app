@@ -17,7 +17,7 @@ export default function SelectField(props: Props) {
             options={options}
             getOptionDisabled={(option) => !disabled.includes(option)}
             value={value}
-            sx={{width: '300px'}}
+            sx={{width: '250px'}}
             onChange={(event: SyntheticEvent, newValue: string | null) => setValue(newValue)}
             renderInput={(params: AutocompleteRenderInputParams) => <TextField {...params} label={label} />}
         />

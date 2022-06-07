@@ -24,7 +24,7 @@ export default function IntervalInput(props: Props) {
                 variant="outlined"
                 type="number"
                 value={seconds}
-                sx={{width: '300px'}}
+                sx={{width: '250px'}}
                 inputProps={{min: min, step: step}}
                 onChange={handleChangeSeconds}
             />

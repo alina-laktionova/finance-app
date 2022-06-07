@@ -60,7 +60,7 @@ export default function FinanceTableRow(props: Props) {
             </TableCell>
             {hideTicker && (
                 <TableCell>
-                    <Tooltip title="Hide">
+                    <Tooltip title="Hide ticker">
                         <IconButton onClick={() => hideTicker(row.ticker)}>
                             <VisibilityOffIcon />
                         </IconButton>

@@ -3,7 +3,7 @@ import {useEffect, useRef, useState} from 'react'
 import FinanceTable from './components/FinanceTable'
 import {SERVER_URL, STORAGE_KEY_FAV, STORAGE_KEY_HIDDEN, tableFields, tickers} from './config/constants'
 import {Ticker} from './models/Ticker'
-import {Box, Button, Container} from '@mui/material'
+import {Box, Button, Container, useMediaQuery} from '@mui/material'
 import LocalAtmIcon from '@mui/icons-material/LocalAtm'
 import Header from './components/Header'
 import IntervalInput from './components/IntervalInput'
@@ -20,6 +20,7 @@ function App() {
     const [delay, setDelay] = useState<number>(5000)
     const [searchValue, setSearchValue] = useState<string | null>(null)
     const data = useRef<Ticker[]>([])
+    const lgScreen = useMediaQuery('(min-width:700px)')
 
     useEffect(() => {
         socket.emit('start')
@@ -82,9 +83,7 @@ function App() {
     return (
         <>
             <Header icon={<LocalAtmIcon fontSize="large" />} name="Finance" />
-            <Container maxWidth="xl" sx={{padding: '40px'}}>
-                <IntervalInput setDelay={setDelay} label="Set update interval (in seconds)" min={5} step={1} />
-
+            <Container maxWidth="xl">
                 {favorites.length > 0 && (
                     <FinanceTable
                         tableFields={tableFields}
@@ -96,22 +95,31 @@ function App() {
                     />
                 )}
 
-                <Box display="flex" gap="5px" mt="40px">
-                    <SelectField
-                        options={tickers}
-                        disabled={hidden}
-                        label="Find ticker"
-                        value={searchValue}
-                        setValue={setSearchValue}
-                    />
-                    <Button
-                        variant="outlined"
-                        disabled={!searchValue}
-                        onClick={() => {
-                            if (searchValue) addTicker(searchValue)
-                        }}>
-                        <AddIcon />
-                    </Button>
+                <Box
+                    display="flex"
+                    flexDirection={lgScreen ? 'row' : 'column'}
+                    justifyContent="space-around"
+                    alignItems="center"
+                    gap="20px"
+                    mt="40px">
+                    <Box display="flex" gap="5px">
+                        <SelectField
+                            options={tickers}
+                            disabled={hidden}
+                            label="Find ticker"
+                            value={searchValue}
+                            setValue={setSearchValue}
+                        />
+                        <Button
+                            variant="outlined"
+                            disabled={!searchValue}
+                            onClick={() => {
+                                if (searchValue) addTicker(searchValue)
+                            }}>
+                            <AddIcon />
+                        </Button>
+                    </Box>
+                    <IntervalInput setDelay={setDelay} label="Set update interval (in seconds)" min={5} step={1} />
                 </Box>
 
                 {rows.length > 0 && hidden.length < rows.length && (
