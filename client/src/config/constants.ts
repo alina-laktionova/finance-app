@@ -22,7 +22,6 @@ export const tableFields: TableField[] = [
     {field: 'dividend', headerName: 'Dividend'},
     {field: 'yield', headerName: 'Yield'},
     {field: 'last_trade_time', headerName: 'Last trade time'},
-    {field: 'favorite', headerName: ''},
 ]
 
 // localStorage key for My Watch List and Hidden Tickers
