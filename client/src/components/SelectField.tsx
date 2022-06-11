@@ -22,7 +22,7 @@ export default function SelectField(props: Props) {
     }
 
     return (
-        <Box display="flex" gap="5px" mt="40px">
+        <Box display="flex" gap="5px" mt="40px" data-testid="select">
             <Autocomplete
                 options={options}
                 getOptionDisabled={(option) => !disabled.includes(option)}

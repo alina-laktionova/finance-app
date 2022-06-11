@@ -7,14 +7,15 @@ Implemented a solution to display price tickers data on the UI in realtime.
 - application renders price changes for some tickers in real time
 - added visual effects to highlight positive or negative changes in the prices
 - added possibility to switch on/off tickers by user
-- added possibility to specify interval time by user
 - added possibility to add/remove ticker from watching group
 
 Used technologies:
 - TypeScript
-- React
+- React (with hooks)
+- Redux (with Thunk)
 - Socket.io
 - Material UI
+- Jest
 - Prettier
 
 

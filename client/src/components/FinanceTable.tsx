@@ -1,4 +1,4 @@
-import {Paper, TableBody, TableCell, TableContainer, TableHead, TableRow, Table, Typography} from '@mui/material'
+import {Paper, TableBody, TableCell, TableContainer, TableHead, TableRow, Table, Typography, Box} from '@mui/material'
 import {Ticker} from '../models/Ticker'
 import {TableField} from '../models/TableField'
 import FinanceTableRow from './FinanceTableRow'
@@ -89,7 +89,7 @@ export default function FinanceTable(props: Props) {
     }
 
     return (
-        <>
+        <Box data-testid="finance-table">
             <Typography textAlign="center" variant="h6" margin="20px 0 10px 0">
                 {header}
             </Typography>
@@ -99,6 +99,6 @@ export default function FinanceTable(props: Props) {
                     {getTableBody()}
                 </Table>
             </TableContainer>
-        </>
+        </Box>
     )
 }

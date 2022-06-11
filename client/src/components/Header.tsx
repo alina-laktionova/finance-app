@@ -1,7 +1,7 @@
 import {AppBar, Container, Toolbar, Typography} from '@mui/material'
 
 type Props = {
-    icon: JSX.Element
+    icon?: JSX.Element
     name: string
 }
 
@@ -9,7 +9,7 @@ export default function Header(props: Props) {
     const {icon, name} = props
 
     return (
-        <AppBar position="static" sx={{backgroundColor: '#4f9fc4'}}>
+        <AppBar data-testid="header" position="static" sx={{backgroundColor: '#4f9fc4'}}>
             <Container maxWidth="xl">
                 <Toolbar>
                     {icon}
